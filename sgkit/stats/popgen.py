@@ -1,16 +1,17 @@
-from typing import Hashable
-
 import dask.array as da
 import numpy as np
 import xarray as xr
 from xarray import DataArray, Dataset
 
+from .. import variables
 from .aggregation import count_variant_alleles
 
 
 def diversity(
     ds: Dataset,
-    allele_counts: Hashable = "variant_allele_count",
+    *,
+    call_genotype: str = "call_genotype",
+    allele_counts: str = "variant_allele_count",
 ) -> DataArray:
     """Compute diversity from allele counts.
 
@@ -27,8 +28,12 @@ def diversity(
     ----------
     ds
         Genotype call dataset.
+    call_genotype
+        Input variable name holding call_genotype.
+        As defined by `sgkit.variables.call_genotype`.
     allele_counts
-        allele counts to use or calculate.
+        allele counts to use or calculate, as defined by
+        `variables.variant_allele_count`
 
     Returns
     -------
@@ -37,8 +42,10 @@ def diversity(
     if len(ds.samples) < 2:
         return xr.DataArray(np.nan)
     if allele_counts not in ds:
-        ds_new = count_variant_alleles(ds)
+        variables.validate(ds, {call_genotype: variables.call_genotype})
+        ds_new = count_variant_alleles(ds, call_genotype=call_genotype)
     else:
+        variables.validate(ds, {allele_counts: variables.variant_allele_count})
         ds_new = ds
     ac = ds_new[allele_counts]
     an = ac.sum(axis=1)
@@ -52,7 +59,9 @@ def diversity(
 def divergence(
     ds1: Dataset,
     ds2: Dataset,
-    allele_counts: Hashable = "variant_allele_count",
+    *,
+    call_genotype: str = "call_genotype",
+    allele_counts: str = "variant_allele_count",
 ) -> DataArray:
     """Compute divergence between two genotype call datasets.
 
@@ -62,21 +71,29 @@ def divergence(
         Genotype call dataset.
     ds2
         Genotype call dataset.
+    call_genotype
+        Input variable name holding call_genotype.
+        As defined by `sgkit.variables.call_genotype`.
     allele_counts
-        allele counts to use or calculate.
+        allele counts to use or calculate, as defined by
+        `variables.variant_allele_count`
 
     Returns
     -------
     divergence value between the two datasets.
     """
     if allele_counts not in ds1:
+        variables.validate(ds1, {call_genotype: variables.call_genotype})
         ds1_new = count_variant_alleles(ds1)
     else:
+        variables.validate(ds1, {allele_counts: variables.variant_allele_count})
         ds1_new = ds1
     ac1 = ds1_new[allele_counts]
     if allele_counts not in ds2:
+        variables.validate(ds2, {call_genotype: variables.call_genotype})
         ds2_new = count_variant_alleles(ds2)
     else:
+        variables.validate(ds2, {allele_counts: variables.variant_allele_count})
         ds2_new = ds2
     ac2 = ds2_new[allele_counts]
     an1 = ds1_new[allele_counts].sum(axis=1)
@@ -92,7 +109,9 @@ def divergence(
 def Fst(
     ds1: Dataset,
     ds2: Dataset,
-    allele_counts: Hashable = "variant_allele_count",
+    *,
+    call_genotype: str = "call_genotype",
+    allele_counts: str = "variant_allele_count",
 ) -> DataArray:
     """Compute Fst between two genotype call datasets.
 
@@ -102,15 +121,21 @@ def Fst(
         Genotype call dataset.
     ds2
         Genotype call dataset.
+    call_genotype
+        Input variable name holding call_genotype.
+        As defined by `sgkit.variables.call_genotype`.
     allele_counts
-        allele counts to use or calculate.
+        allele counts to use or calculate, as defined by
+        `variables.variant_allele_count`
 
     Returns
     -------
     fst value between the two datasets.
     """
-    total_div = diversity(ds1) + diversity(ds2)
-    gs = divergence(ds1, ds2)
+    total_div = diversity(
+        ds1, call_genotype=call_genotype, allele_counts=allele_counts
+    ) + diversity(ds2, call_genotype=call_genotype, allele_counts=allele_counts)
+    gs = divergence(ds1, ds2, call_genotype=call_genotype, allele_counts=allele_counts)
     den = total_div + 2 * gs  # type: ignore[operator]
     fst = 1 - (2 * total_div / den)
     return fst  # type: ignore[no-any-return]
@@ -118,7 +143,9 @@ def Fst(
 
 def Tajimas_D(
     ds: Dataset,
-    allele_counts: Hashable = "variant_allele_count",
+    *,
+    call_genotype: str = "call_genotype",
+    allele_counts: str = "variant_allele_count",
 ) -> DataArray:
     """Compute Tajimas' D for a genotype call dataset.
 
@@ -126,8 +153,12 @@ def Tajimas_D(
     ----------
     ds
         Genotype call dataset.
+    call_genotype
+        Input variable name holding call_genotype.
+        As defined by `sgkit.variables.call_genotype`.
     allele_counts
-        allele counts to use or calculate.
+        allele counts to use or calculate, as defined by
+        `variables.variant_allele_count`
 
     Returns
     -------
@@ -135,8 +166,10 @@ def Tajimas_D(
 
     """
     if allele_counts not in ds:
+        variables.validate(ds, {call_genotype: variables.call_genotype})
         ds_new = count_variant_alleles(ds)
     else:
+        variables.validate(ds, {allele_counts: variables.variant_allele_count})
         ds_new = ds
     ac = ds_new[allele_counts]
 
