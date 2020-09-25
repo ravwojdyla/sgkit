@@ -30,10 +30,10 @@ def diversity(
         Genotype call dataset.
     call_genotype
         Input variable name holding call_genotype.
-        As defined by `sgkit.variables.call_genotype`.
+        As defined by :data:`sgkit.variables.call_genotype`.
     allele_counts
         allele counts to use or calculate, as defined by
-        `variables.variant_allele_count`
+        :data:`sgkit.variables.variant_allele_count`
 
     Returns
     -------
@@ -73,10 +73,10 @@ def divergence(
         Genotype call dataset.
     call_genotype
         Input variable name holding call_genotype.
-        As defined by `sgkit.variables.call_genotype`.
+        As defined by :data:`sgkit.variables.call_genotype`.
     allele_counts
         allele counts to use or calculate, as defined by
-        `variables.variant_allele_count`
+        :data:`sgkit.variables.variant_allele_count`
 
     Returns
     -------
@@ -123,10 +123,10 @@ def Fst(
         Genotype call dataset.
     call_genotype
         Input variable name holding call_genotype.
-        As defined by `sgkit.variables.call_genotype`.
+        As defined by :data:`sgkit.variables.call_genotype`.
     allele_counts
         allele counts to use or calculate, as defined by
-        `variables.variant_allele_count`
+        :data:`sgkit.variables.variant_allele_count`
 
     Returns
     -------
@@ -155,10 +155,10 @@ def Tajimas_D(
         Genotype call dataset.
     call_genotype
         Input variable name holding call_genotype.
-        As defined by `sgkit.variables.call_genotype`.
+        As defined by :data:`sgkit.variables.call_genotype`.
     allele_counts
         allele counts to use or calculate, as defined by
-        `variables.variant_allele_count`
+        :data:`sgkit.variables.variant_allele_count`
 
     Returns
     -------

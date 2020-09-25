@@ -53,7 +53,7 @@ def count_alleles(g: ArrayLike, _: ArrayLike, out: ArrayLike) -> None:
 
 
 def count_call_alleles(
-    ds: Dataset, merge: bool = True, *, call_genotype: str = "call_genotype"
+    ds: Dataset, *, call_genotype: str = "call_genotype", merge: bool = True
 ) -> Dataset:
     """Compute per sample allele counts from genotype calls.
 
@@ -61,14 +61,15 @@ def count_call_alleles(
     ----------
     ds
         Genotype call dataset such as from
-        `sgkit.create_genotype_call_dataset`.
+        :func:`sgkit.create_genotype_call_dataset`.
+    call_genotype
+        Input variable name holding call_genotype as defined by
+        :data:`sgkit.variables.call_genotype`
     merge
         If True (the default), merge the input dataset and the computed
         output variables into a single dataset, otherwise return only
         the computed output variables.
         See :ref:`dataset_merge` for more details.
-    call_genotype
-        Input variable name holding call_genotype as defined by `sgkit.variables.call_genotype`
 
     Returns
     -------
@@ -124,7 +125,7 @@ def count_call_alleles(
 
 
 def count_variant_alleles(
-    ds: Dataset, merge: bool = True, *, call_genotype: str = "call_genotype"
+    ds: Dataset, *, call_genotype: str = "call_genotype", merge: bool = True
 ) -> Dataset:
     """Compute allele count from genotype calls.
 
@@ -132,14 +133,15 @@ def count_variant_alleles(
     ----------
     ds
         Genotype call dataset such as from
-        `sgkit.create_genotype_call_dataset`.
+        :func:`sgkit.create_genotype_call_dataset`.
+    call_genotype
+        Input variable name holding call_genotype as defined by
+        :data:`sgkit.variables.call_genotype`
     merge
         If True (the default), merge the input dataset and the computed
         output variables into a single dataset, otherwise return only
         the computed output variables.
         See :ref:`dataset_merge` for more details.
-    call_genotype
-        Input variable name holding call_genotype as defined by `sgkit.variables.call_genotype`
 
     Returns
     -------
@@ -255,16 +257,16 @@ def variant_stats(
     ----------
     ds
         Genotype call dataset such as from
-        `sgkit.create_genotype_call_dataset`.
+        :func:`sgkit.create_genotype_call_dataset`.
     call_genotype
         Input variable name holding call_genotype.
-        As defined by `sgkit.variables.call_genotype`.
+        As defined by :data:`sgkit.variables.call_genotype`.
     call_genotype_mask
         Input variable name holding call_genotype_mask.
-        As defined by `sgkit.variables.call_genotype_mask`
+        As defined by :data:`sgkit.variables.call_genotype_mask`
     variant_allele_count
         Optional name of the input variable holding variant_allele_count,
-        as defined by `sgkit.variables.variant_allele_count`.
+        as defined by :data:`sgkit.variables.variant_allele_count`.
     merge
         If True (the default), merge the input dataset and the computed
         output variables into a single dataset, otherwise return only
@@ -275,15 +277,24 @@ def variant_stats(
     -------
     A dataset containing the following variables:
 
-    - `variant_n_called` (variants): The number of samples with called genotypes.
-    - `variant_call_rate` (variants): The fraction of samples with called genotypes.
-    - `variant_n_het` (variants): The number of samples with heterozygous calls.
-    - `variant_n_hom_ref` (variants): The number of samples with homozygous reference calls.
-    - `variant_n_hom_alt` (variants): The number of samples with homozygous alternate calls.
-    - `variant_n_non_ref` (variants): The number of samples that are not homozygous reference calls.
-    - `variant_allele_count` (variants, alleles): The number of occurrences of each allele.
-    - `variant_allele_total` (variants): The number of occurrences of all alleles.
-    - `variant_allele_frequency` (variants, alleles): The frequency of occurence of each allele.
+    - :data:`sgkit.variables.variant_n_called` (variants):
+      The number of samples with called genotypes.
+    - :data:`sgkit.variables.variant_call_rate` (variants):
+      The fraction of samples with called genotypes.
+    - :data:`sgkit.variables.variant_n_het` (variants):
+      The number of samples with heterozygous calls.
+    - :data:`sgkit.variables.variant_n_hom_ref` (variants):
+      The number of samples with homozygous reference calls.
+    - :data:`sgkit.variables.variant_n_hom_alt` (variants):
+      The number of samples with homozygous alternate calls.
+    - :data:`sgkit.variables.variant_n_non_ref` (variants):
+      The number of samples that are not homozygous reference calls.
+    - :data:`sgkit.variables.variant_allele_count` (variants, alleles):
+      The number of occurrences of each allele.
+    - :data:`sgkit.variables.variant_allele_total` (variants):
+      The number of occurrences of all alleles.
+    - :data:`sgkit.variables.variant_allele_frequency` (variants, alleles):
+      The frequency of occurrence of each allele.
     """
     variables.validate(
         ds,
