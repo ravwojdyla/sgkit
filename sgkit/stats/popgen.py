@@ -30,7 +30,7 @@ def diversity(
         Genotype call dataset.
     call_genotype
         Input variable name holding call_genotype.
-        As defined by :data:`sgkit.variables.call_genotype`.
+        Defined by :data:`sgkit.variables.call_genotype`.
     allele_counts
         allele counts to use or calculate, as defined by
         :data:`sgkit.variables.variant_allele_count`
@@ -73,7 +73,7 @@ def divergence(
         Genotype call dataset.
     call_genotype
         Input variable name holding call_genotype.
-        As defined by :data:`sgkit.variables.call_genotype`.
+        Defined by :data:`sgkit.variables.call_genotype`.
     allele_counts
         allele counts to use or calculate, as defined by
         :data:`sgkit.variables.variant_allele_count`
@@ -123,7 +123,7 @@ def Fst(
         Genotype call dataset.
     call_genotype
         Input variable name holding call_genotype.
-        As defined by :data:`sgkit.variables.call_genotype`.
+        Defined by :data:`sgkit.variables.call_genotype`.
     allele_counts
         allele counts to use or calculate, as defined by
         :data:`sgkit.variables.variant_allele_count`
@@ -155,7 +155,7 @@ def Tajimas_D(
         Genotype call dataset.
     call_genotype
         Input variable name holding call_genotype.
-        As defined by :data:`sgkit.variables.call_genotype`.
+        Defined by :data:`sgkit.variables.call_genotype`.
     allele_counts
         allele counts to use or calculate, as defined by
         :data:`sgkit.variables.variant_allele_count`
@@ -163,7 +163,6 @@ def Tajimas_D(
     Returns
     -------
     Tajimas' D value.
-
     """
     if allele_counts not in ds:
         variables.validate(ds, {call_genotype: variables.call_genotype})
