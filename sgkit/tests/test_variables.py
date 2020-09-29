@@ -79,3 +79,19 @@ def test_variables__whole_ds(dummy_ds: xr.Dataset) -> None:
     finally:
         SgkitVariables.registered_variables.pop("foo", None)
         SgkitVariables.registered_variables.pop("bar", None)
+
+
+def test_variables__eq_hash(dummy_ds: xr.Dataset) -> None:
+    spec_foo = ArrayLikeSpec("foo", kind="i", ndim=1)
+    spec_foo_2 = ArrayLikeSpec("foo", kind="i", ndim=2)
+    assert spec_foo == "foo"
+    assert spec_foo != "foo2"
+    assert "foo" == spec_foo
+    assert "foo2" != spec_foo
+    assert {spec_foo: 3}[spec_foo] == 3
+    assert {spec_foo: 3}["foo"] == 3  # type: ignore[index]
+    assert "foo" in {spec_foo: 3}  # type: ignore[comparison-overlap]
+    assert spec_foo in dummy_ds
+    assert type(dummy_ds[spec_foo]) == xr.DataArray
+    assert dummy_ds[spec_foo].name == "foo"
+    assert spec_foo != spec_foo_2

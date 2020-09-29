@@ -10,6 +10,7 @@ from xarray import Dataset
 
 from sgkit.stats.association import gwas_linear_regression, linear_regression
 from sgkit.typing import ArrayLike
+from sgkit.variables import Spec
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", DeprecationWarning)
@@ -133,7 +134,11 @@ def _get_statistics(
         res = _sm_statistics(ds, i, add_intercept)
         df_pred.append(
             dsr.to_dataframe()
-            .rename(columns=lambda c: c.replace("variant_", ""))
+            .rename(
+                columns=lambda c: c.default_name.replace("variant_", "")
+                if isinstance(c, Spec)
+                else c.replace("variant_", "")
+            )
             .iloc[i]
             .to_dict()
         )

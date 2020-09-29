@@ -170,5 +170,5 @@ def pc_relate(
     phi = gramian(centered_af) / gramian(stddev)
     # NOTE: phi is of shape (S x S), S = num samples
     assert phi.shape == (call_g.shape[1],) * 2
-    new_ds = xr.Dataset({"pc_relate_phi": (("sample_x", "sample_y"), phi)})
+    new_ds = xr.Dataset({variables.pc_relate_phi: (("sample_x", "sample_y"), phi)})
     return conditional_merge_datasets(ds, variables.validate(new_ds), merge)

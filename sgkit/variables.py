@@ -1,20 +1,55 @@
 import logging
-from dataclasses import dataclass
-from typing import Dict, Hashable, Mapping, Set, Union, overload
+from dataclasses import dataclass, fields
+from typing import Any, Dict, Hashable, Mapping, Set, Union, overload
 
 import xarray as xr
 
 logger = logging.getLogger(__name__)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False, repr=False)
 class Spec:
     """Root type Spec"""
 
     default_name: str
 
+    # Note: these eq,hash dunder methods make Spec essentially
+    #       act/look like a string-like object. When
+    #       used in the context of a dictionary (in xr.Dataset
+    #       variables or the sgkit variable registry).
+    #       This essentially means that you can do things like:
+    #
+    #       foo = ArrayLikeSpec("foo", 3, "u")
+    #       foo == "foo"  # True
+    #       {foo: 3}[foo] == {foo: 3}["foo"]  # True
+    #       ds = xr.Dataset({foo: (("sample_x", "sample_y"), phi)})
+    #       ds[foo]
+    #
+    #       This makes sgkit variables API more concise, but
+    #       it does introduce some level of complexity if
+    #       a dev doesn't expect equality like foo == "foo".
+    #       I'm not entirely sure it's a good idea yet.
 
-@dataclass(frozen=True)
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, self.__class__):
+            return all(
+                getattr(self, f.name) == getattr(other, f.name) for f in fields(self)
+            )
+        elif isinstance(other, str):
+            return self.default_name == other
+        return NotImplemented
+
+    def __hash__(self) -> int:
+        return self.default_name.__hash__()
+
+    def __repr__(self) -> str:
+        return self.default_name.__repr__()
+
+    def __str__(self) -> str:
+        return self.default_name.__str__()
+
+
+@dataclass(frozen=True, eq=False, repr=False)
 class ArrayLikeSpec(Spec):
     """ArrayLike type spec"""
 
@@ -161,7 +196,7 @@ class SgkitVariables:
     """Holds registry of Sgkit variables, and can validate a dataset against a spec"""
 
     registered_variables: Dict[Hashable, ArrayLikeSpec] = {
-        x.default_name: x for x in globals().values() if isinstance(x, ArrayLikeSpec)
+        x: x for x in globals().values() if isinstance(x, ArrayLikeSpec)
     }
 
     @classmethod

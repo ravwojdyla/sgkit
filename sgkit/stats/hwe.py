@@ -203,5 +203,5 @@ def hardy_weinberg_test(
         cts = [1, 0, 2]  # arg order: hets, hom1, hom2
         obs = [da.asarray((AC == ct).sum(dim="samples")) for ct in cts]
     p = da.map_blocks(hardy_weinberg_p_value_vec_jit, *obs)
-    new_ds = xr.Dataset({"variant_hwe_p_value": ("variants", p)})
+    new_ds = xr.Dataset({variables.variant_hwe_p_value: ("variants", p)})
     return conditional_merge_datasets(ds, variables.validate(new_ds), merge)

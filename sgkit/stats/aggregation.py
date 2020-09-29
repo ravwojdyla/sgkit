@@ -228,14 +228,14 @@ def allele_frequency(
         AC = count_variant_alleles(ds, merge=False, call_genotype=call_genotype)[
             "variant_allele_count"
         ]
-        data_vars["variant_allele_count"] = AC
+        data_vars[variables.variant_allele_count] = AC
 
     M = ds[call_genotype_mask].stack(calls=("samples", "ploidy"))
     AN = (~M).sum(dim="calls")  # type: ignore
     assert AN.shape == (ds.dims["variants"],)
 
-    data_vars["variant_allele_total"] = AN
-    data_vars["variant_allele_frequency"] = AC / AN
+    data_vars[variables.variant_allele_total] = AN
+    data_vars[variables.variant_allele_frequency] = AC / AN
     return Dataset(data_vars)
 
 

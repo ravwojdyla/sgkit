@@ -104,11 +104,13 @@ def linear_regression(
     return LinearRegressionResult(beta=B, t_value=T, p_value=P)
 
 
-def _get_loop_covariates(ds: Dataset, dosage: Optional[str] = None) -> Array:
+def _get_loop_covariates(
+    ds: Dataset, dosage: Optional[str] = None, call_genotype: str = "call_genotype"
+) -> Array:
     if dosage is None:
         # TODO: This should be (probably gwas-specific) allele
         # count with sex chromosome considerations
-        G = ds["call_genotype"].sum(dim="ploidy")  # pragma: no cover
+        G = ds[call_genotype].sum(dim="ploidy")  # pragma: no cover
     else:
         G = ds[dosage]
     return da.asarray(G.data)
@@ -121,6 +123,7 @@ def gwas_linear_regression(
     covariates: Union[str, Sequence[str]],
     traits: Union[str, Sequence[str]],
     add_intercept: bool = True,
+    call_genotype: str = "call_genotype",
     merge: bool = True,
 ) -> Dataset:
     """Run linear regression to identify continuous trait associations with genetic variants.
@@ -147,6 +150,9 @@ def gwas_linear_regression(
         Defined by :data:`sgkit.variables.traits`.
     add_intercept
         Add intercept term to covariate set, by default True.
+    call_genotype
+        Input variable name holding call_genotype.
+        Defined by :data:`sgkit.variables.call_genotype`.
     merge
         If True (the default), merge the input dataset and the computed
         output variables into a single dataset, otherwise return only
@@ -198,7 +204,7 @@ def gwas_linear_regression(
         {t: variables.traits for t in traits},
     )
 
-    G = _get_loop_covariates(ds, dosage=dosage)
+    G = _get_loop_covariates(ds, dosage=dosage, call_genotype=call_genotype)
 
     X = da.asarray(concat_2d(ds[list(covariates)], dims=("samples", "covariates")))
     if add_intercept:
@@ -216,9 +222,9 @@ def gwas_linear_regression(
     res = linear_regression(G.T, X, Y)
     new_ds = xr.Dataset(
         {
-            "variant_beta": (("variants", "traits"), res.beta),
-            "variant_t_value": (("variants", "traits"), res.t_value),
-            "variant_p_value": (("variants", "traits"), res.p_value),
+            variables.variant_beta: (("variants", "traits"), res.beta),
+            variables.variant_t_value: (("variants", "traits"), res.t_value),
+            variables.variant_p_value: (("variants", "traits"), res.p_value),
         }
     )
     return conditional_merge_datasets(ds, variables.validate(new_ds), merge)

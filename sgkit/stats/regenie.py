@@ -708,16 +708,16 @@ def regenie_transform(
     YP3 = _stage_3(B2, YP1, X, Y, contigs, variant_chunk_start)
 
     data_vars: Dict[Hashable, Any] = {}
-    data_vars["base_prediction"] = xr.DataArray(
+    data_vars[variables.base_prediction] = xr.DataArray(
         YP1,
         dims=("blocks", "alphas", "samples", "outcomes"),
         attrs={"description": DESC_BASE_PRED},
     )
-    data_vars["meta_prediction"] = xr.DataArray(
+    data_vars[variables.meta_prediction] = xr.DataArray(
         YP2, dims=("samples", "outcomes"), attrs={"description": DESC_META_PRED}
     )
     if YP3 is not None:
-        data_vars["loco_prediction"] = xr.DataArray(
+        data_vars[variables.loco_prediction] = xr.DataArray(
             YP3,
             dims=("contigs", "samples", "outcomes"),
             attrs={"description": DESC_LOCO_PRED},

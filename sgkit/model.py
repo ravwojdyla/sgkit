@@ -5,7 +5,6 @@ import xarray as xr
 
 from . import variables
 from .typing import ArrayLike
-from .utils import check_array_like
 
 DIM_VARIANT = "variants"
 DIM_SAMPLE = "samples"
@@ -59,25 +58,23 @@ def create_genotype_call_dataset(
     The dataset of genotype calls.
     """
     data_vars: Dict[Hashable, Any] = {
-        "variant_contig": ([DIM_VARIANT], variant_contig),
-        "variant_position": ([DIM_VARIANT], variant_position),
-        "variant_allele": ([DIM_VARIANT, DIM_ALLELE], variant_alleles),
-        "sample_id": ([DIM_SAMPLE], sample_id),
-        "call_genotype": ([DIM_VARIANT, DIM_SAMPLE, DIM_PLOIDY], call_genotype),
-        "call_genotype_mask": (
+        variables.variant_contig: ([DIM_VARIANT], variant_contig),
+        variables.variant_position: ([DIM_VARIANT], variant_position),
+        variables.variant_allele: ([DIM_VARIANT, DIM_ALLELE], variant_alleles),
+        variables.sample_id: ([DIM_SAMPLE], sample_id),
+        variables.call_genotype: ([DIM_VARIANT, DIM_SAMPLE, DIM_PLOIDY], call_genotype),
+        variables.call_genotype_mask: (
             [DIM_VARIANT, DIM_SAMPLE, DIM_PLOIDY],
             call_genotype < 0,
         ),
     }
     if call_genotype_phased is not None:
-        check_array_like(call_genotype_phased, kind="b", ndim=2)
-        data_vars["call_genotype_phased"] = (
+        data_vars[variables.call_genotype_phased] = (
             [DIM_VARIANT, DIM_SAMPLE],
             call_genotype_phased,
         )
     if variant_id is not None:
-        check_array_like(variant_id, kind={"U", "O"}, ndim=1)
-        data_vars["variant_id"] = ([DIM_VARIANT], variant_id)
+        data_vars[variables.variant_id] = ([DIM_VARIANT], variant_id)
     attrs: Dict[Hashable, Any] = {"contigs": variant_contig_names}
     return variables.validate(xr.Dataset(data_vars=data_vars, attrs=attrs))
 
@@ -129,23 +126,22 @@ def create_genotype_dosage_dataset(
 
     """
     data_vars: Dict[Hashable, Any] = {
-        "variant_contig": ([DIM_VARIANT], variant_contig),
-        "variant_position": ([DIM_VARIANT], variant_position),
-        "variant_allele": ([DIM_VARIANT, DIM_ALLELE], variant_alleles),
-        "sample_id": ([DIM_SAMPLE], sample_id),
-        "call_dosage": ([DIM_VARIANT, DIM_SAMPLE], call_dosage),
-        "call_dosage_mask": ([DIM_VARIANT, DIM_SAMPLE], np.isnan(call_dosage)),
-        "call_genotype_probability": (
+        variables.variant_contig: ([DIM_VARIANT], variant_contig),
+        variables.variant_position: ([DIM_VARIANT], variant_position),
+        variables.variant_allele: ([DIM_VARIANT, DIM_ALLELE], variant_alleles),
+        variables.sample_id: ([DIM_SAMPLE], sample_id),
+        variables.call_dosage: ([DIM_VARIANT, DIM_SAMPLE], call_dosage),
+        variables.call_dosage_mask: ([DIM_VARIANT, DIM_SAMPLE], np.isnan(call_dosage)),
+        variables.call_genotype_probability: (
             [DIM_VARIANT, DIM_SAMPLE, DIM_GENOTYPE],
             call_genotype_probability,
         ),
-        "call_genotype_probability_mask": (
+        variables.call_genotype_probability_mask: (
             [DIM_VARIANT, DIM_SAMPLE, DIM_GENOTYPE],
             np.isnan(call_genotype_probability),
         ),
     }
     if variant_id is not None:
-        check_array_like(variant_id, kind={"U", "O"}, ndim=1)
-        data_vars["variant_id"] = ([DIM_VARIANT], variant_id)
+        data_vars[variables.variant_id] = ([DIM_VARIANT], variant_id)
     attrs: Dict[Hashable, Any] = {"contigs": variant_contig_names}
     return variables.validate(xr.Dataset(data_vars=data_vars, attrs=attrs))
