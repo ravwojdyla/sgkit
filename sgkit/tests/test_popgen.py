@@ -1,7 +1,7 @@
 import itertools
 
 import allel
-import msprime  # type: ignore
+import msprime  # type: ignore[import]
 import numpy as np
 import pytest
 import xarray as xr

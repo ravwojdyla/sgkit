@@ -25,5 +25,7 @@ repos:
     rev: v0.782
     hooks:
       - id: mypy
-        args: ["--strict", "--show-error-codes"]
+        # all mypy settings are in setup.cfg, we explicitly set args to [] to overwrite
+        # default mypy pre-commit args
+        args: []
         additional_dependencies: ["numpy", "xarray", "dask[array]", "scipy", "typing-extensions", "zarr", "numba", "dask-ml"]

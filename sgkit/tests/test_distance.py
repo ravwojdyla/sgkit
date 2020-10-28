@@ -3,7 +3,7 @@ import typing
 import dask.array as da
 import numpy as np
 import pytest
-from scipy.spatial.distance import (  # type: ignore
+from scipy.spatial.distance import (  # type: ignore[import]
     correlation,
     euclidean,
     pdist,
