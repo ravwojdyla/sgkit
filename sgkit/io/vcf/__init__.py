@@ -1,15 +1,8 @@
 import platform
 
 try:
-    from .vcf_partition import partition_into_regions  # noqa: F401
-    from .vcf_reader import vcf_to_zarr, vcf_to_zarrs, zarrs_to_dataset  # noqa: F401
-
-    __all__ = [
-        "partition_into_regions",
-        "vcf_to_zarr",
-        "vcf_to_zarrs",
-        "zarrs_to_dataset",
-    ]
+    from .vcf_partition import partition_into_regions
+    from .vcf_reader import vcf_to_zarr, vcf_to_zarrs, zarrs_to_dataset
 except ImportError as e:
     if platform.system() == "Windows":
         msg = (
