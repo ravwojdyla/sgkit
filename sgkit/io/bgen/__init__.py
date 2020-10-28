@@ -1,5 +1,7 @@
 try:
-    from .bgen_reader import bgen_to_zarr, read_bgen, rechunk_bgen
+    from .bgen_reader import bgen_to_zarr, read_bgen, rechunk_bgen  # noqa: F401
+
+    __all__ = ["read_bgen", "bgen_to_zarr", "rechunk_bgen"]
 except ImportError as e:
     msg = (
         "sgkit bgen requirements are not installed.\n\n"
